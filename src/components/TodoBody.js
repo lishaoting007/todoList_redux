@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import '../css/TodoBody.css';
+import '../scss/todoBody.scss';
+import TodoHeader from './TodoHeader';
+import TodoItem from './TodoItem';
+import TodoFooter from './TodoFooter';
+import store from '../store';
 
 class TodoBody extends Component {
   constructor(props) {
@@ -7,10 +11,28 @@ class TodoBody extends Component {
     this.state = {};
   }
   render() {
+    const stateStatus = store.getState().status;
     return (
-      <div className="Body">
-        <li className="li">{}</li>
-        <button>删除</button>
+      <div className="TodoBody">
+        <TodoHeader />
+        <ul>
+          {store.getState().arr.map((item, index) => {
+            if (stateStatus === 1) {
+              return <TodoItem item={item} index={index} key={index} />;
+            } else if (stateStatus === 2) {
+              return !item.isDone ? (
+                <TodoItem item={item} index={index} key={index} />
+              ) : null;
+            } else if (stateStatus === 3) {
+              return item.isDone ? (
+                <TodoItem item={item} index={index} key={index} />
+              ) : null;
+            } else {
+              return null;
+            }
+          })}
+        </ul>
+        <TodoFooter />
       </div>
     );
   }

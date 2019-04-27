@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import '../css/TodoHeader.css';
+import '../scss/todoHeader.scss';
+import store from '../store/index';
 
 class TodoHeader extends Component {
   constructor(props) {
@@ -9,10 +10,21 @@ class TodoHeader extends Component {
   render() {
     return (
       <div className="Header">
-        <input type="text" />
+        <input type="text" onKeyDown={this.handleEnter} />
       </div>
     );
   }
+  handleEnter = e => {
+    if (e.keyCode === 13) {
+      const item = {
+        text: e.target.value,
+        isDone: false,
+        isEdit: false
+      };
+      store.dispatch({ type: 'ADD_TODO', item });
+      e.target.value = '';
+    }
+  };
 }
 
 export default TodoHeader;

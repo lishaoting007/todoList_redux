@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import '../css/TodoFooter.css';
+import '../scss/todoFooter.scss';
+import store from '../store';
 
 class TodoFooter extends Component {
   constructor(props) {
@@ -7,18 +8,28 @@ class TodoFooter extends Component {
     this.state = {};
   }
   render() {
+    const { arr } = store.getState();
+    const newArr = arr.filter(item => !item.isDone);
     return (
       <div className="Footer">
-        <span className="left">{}个Todo</span>
+        <span className="left">{newArr.length}个Todo</span>
         <div className="middle">
-          <button>全部</button>
-          <button>未完成</button>
-          <button>已完成</button>
+          <button onClick={() => this.toggleStatus(1)}>全部</button>
+          <button onClick={() => this.toggleStatus(2)}>未完成</button>
+          <button onClick={() => this.toggleStatus(3)}>已完成</button>
         </div>
-        <button className="right">清除已完成</button>
+        <button className="right" onClick={this.clearIsDone}>
+          清除已完成
+        </button>
       </div>
     );
   }
+  toggleStatus = status => {
+    store.dispatch({ type: 'UPDATE_STATUS', status });
+  };
+  clearIsDone = () => {
+    store.dispatch({ type: 'CLEAR_ISDONE' });
+  };
 }
 
 export default TodoFooter;
