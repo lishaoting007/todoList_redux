@@ -1,0 +1,19 @@
+.Footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 50px auto;
+  width: 300px;
+  border: 1px solid #000;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.middle {
+  float: left;
+}
