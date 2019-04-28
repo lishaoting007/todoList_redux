@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../scss/todoItem.scss';
-import store from '../store';
-import { Promise } from 'q';
+import { connect } from 'react-redux';
 
 class TodoItem extends Component {
   constructor(props) {
@@ -12,7 +11,10 @@ class TodoItem extends Component {
     const { item, index } = this.props;
     return !item.isEdit ? (
       <li className="todoItem">
-        <div className="itemWrap" onDoubleClick={this.doubleToggleEidt}>
+        <div
+          className="itemWrap"
+          onDoubleClick={() => this.doubleToggleEidt(index)}
+        >
           <span className={item.isDone ? 'done' : ''}>{item.text}</span>
         </div>
         <button onClick={() => this.toggleTodo(index)}>完成</button>
@@ -32,39 +34,52 @@ class TodoItem extends Component {
     );
   }
   toggleTodo = index => {
-    store.dispatch({ type: 'TOGGLE_TODO', index });
+    this.props.toggleTodo(index);
   };
   reduceTodo = index => {
-    store.dispatch({ type: 'REDUCE_TODO', index });
+    this.props.reduceTodo(index);
   };
-  doubleToggleEidt = () => {
+  doubleToggleEidt = index => {
+    const _this = this;
     new Promise(resolve => {
-      store.dispatch({ type: 'TOGGLE_EDIT', index: this.props.index });
+      _this.props.doubleToggleEidt(index);
       resolve();
-    }).then(() => {
-      this.refs.input.focus();
     });
   };
   changeTodoTextWhenBlur = e => {
     const item = e.target.value;
-    store.dispatch({ type: 'CHANGE_TODO_TEXT', item, index: this.props.index });
+    this.props.changeTodoText(item);
     this.doubleToggleEidt();
   };
   handleChange = e => {
     const item = e.target.value;
-    store.dispatch({ type: 'CHANGE_TODO_TEXT', item, index: this.props.index });
+    this.props.changeTodoText(item);
   };
   handleEnter = e => {
     if (e.keyCode === 13) {
       const item = e.target.value;
-      store.dispatch({
-        type: 'CHANGE_TODO_TEXT',
-        item,
-        index: this.props.index
-      });
+      this.props.changeTodoText(item);
       this.doubleToggleEidt();
     }
   };
 }
 
-export default TodoItem;
+export default connect(
+  null,
+  dispatch => {
+    return {
+      toggleTodo: index => {
+        dispatch({ type: 'TOGGLE_TODO', index });
+      },
+      reduceTodo: index => {
+        dispatch({ type: 'REDUCE_TODO', index });
+      },
+      doubleToggleEidt: index => {
+        dispatch({ type: 'TOGGLE_EDIT', index });
+      },
+      changeTodoText: item => {
+        dispatch({ type: 'CHANGE_TODO_TEXT', item, index: this.props.index });
+      }
+    };
+  }
+)(TodoItem);

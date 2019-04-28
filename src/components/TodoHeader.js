@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../scss/todoHeader.scss';
-import store from '../store/index';
+import { connect } from 'react-redux';
 
 class TodoHeader extends Component {
   constructor(props) {
@@ -21,10 +21,19 @@ class TodoHeader extends Component {
         isDone: false,
         isEdit: false
       };
-      store.dispatch({ type: 'ADD_TODO', item });
+      this.props.addItem(item);
       e.target.value = '';
     }
   };
 }
 
-export default TodoHeader;
+export default connect(
+  null,
+  dispatch => {
+    return {
+      addItem: item => {
+        dispatch({ type: 'ADD_TODO', item });
+      }
+    };
+  }
+)(TodoHeader);

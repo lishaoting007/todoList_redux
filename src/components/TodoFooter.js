@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../scss/todoFooter.scss';
-import store from '../store';
+import { connect } from 'react-redux';
 
 class TodoFooter extends Component {
   constructor(props) {
@@ -8,7 +8,7 @@ class TodoFooter extends Component {
     this.state = {};
   }
   render() {
-    const { arr } = store.getState();
+    const { arr } = this.props;
     const newArr = arr.filter(item => !item.isDone);
     return (
       <div className="Footer">
@@ -25,11 +25,27 @@ class TodoFooter extends Component {
     );
   }
   toggleStatus = status => {
-    store.dispatch({ type: 'UPDATE_STATUS', status });
+    this.props.toggleStatus(status);
   };
   clearIsDone = () => {
-    store.dispatch({ type: 'CLEAR_ISDONE' });
+    this.props.clearIsDone();
   };
 }
 
-export default TodoFooter;
+export default connect(
+  state => {
+    return {
+      arr: state.arr
+    };
+  },
+  dispatch => {
+    return {
+      toggleStatus: status => {
+        dispatch({ type: 'UPDATE_STATUS', status });
+      },
+      clearIsDone: () => {
+        dispatch({ type: 'CLEAR_ISDONE' });
+      }
+    };
+  }
+)(TodoFooter);

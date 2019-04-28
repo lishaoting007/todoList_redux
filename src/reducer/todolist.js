@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-function arr(state = [], action) {
+function arr(state = [{ text: '学习', isDone: false, isEdit: false }], action) {
   switch (action.type) {
     case 'ADD_TODO':
       return [...state, action.item];

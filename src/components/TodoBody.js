@@ -3,7 +3,7 @@ import '../scss/todoBody.scss';
 import TodoHeader from './TodoHeader';
 import TodoItem from './TodoItem';
 import TodoFooter from './TodoFooter';
-import store from '../store';
+import { connect } from 'react-redux';
 
 class TodoBody extends Component {
   constructor(props) {
@@ -11,12 +11,12 @@ class TodoBody extends Component {
     this.state = {};
   }
   render() {
-    const stateStatus = store.getState().status;
+    const stateStatus = this.props.status;
     return (
       <div className="TodoBody">
         <TodoHeader />
         <ul>
-          {store.getState().arr.map((item, index) => {
+          {this.props.arr.map((item, index) => {
             if (stateStatus === 1) {
               return <TodoItem item={item} index={index} key={index} />;
             } else if (stateStatus === 2) {
@@ -38,4 +38,6 @@ class TodoBody extends Component {
   }
 }
 
-export default TodoBody;
+export default connect(state => {
+  return { ...state };
+})(TodoBody);
