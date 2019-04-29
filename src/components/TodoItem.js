@@ -26,9 +26,9 @@ class TodoItem extends Component {
           type="text"
           ref="input"
           value={item.text}
-          onBlur={this.changeTodoTextWhenBlur}
-          onChange={this.handleChange}
-          onKeyDown={this.handleEnter}
+          onBlur={e => this.changeTodoTextWhenBlur(e, index)}
+          onChange={e => this.handleChange(e, index)}
+          onKeyDown={e => this.handleEnter(e, index)}
         />
       </li>
     );
@@ -40,32 +40,37 @@ class TodoItem extends Component {
     this.props.reduceTodo(index);
   };
   doubleToggleEidt = index => {
-    const _this = this;
-    new Promise(resolve => {
-      _this.props.doubleToggleEidt(index);
+    return new Promise(resolve => {
+      this.props.doubleToggleEidt(index);
       resolve();
+    }).then(() => {
+      this.refs.input.focus();
     });
   };
-  changeTodoTextWhenBlur = e => {
+  changeTodoTextWhenBlur = (e, index) => {
     const item = e.target.value;
-    this.props.changeTodoText(item);
-    this.doubleToggleEidt();
+    this.props.changeTodoText(item, index);
+    this.props.doubleToggleEidt(index);
   };
-  handleChange = e => {
+  handleChange = (e, index) => {
     const item = e.target.value;
-    this.props.changeTodoText(item);
+    this.props.changeTodoText(item, index);
   };
-  handleEnter = e => {
+  handleEnter = (e, index) => {
     if (e.keyCode === 13) {
       const item = e.target.value;
-      this.props.changeTodoText(item);
-      this.doubleToggleEidt();
+      this.props.changeTodoText(item, index);
+      this.props.doubleToggleEidt(index);
     }
   };
 }
 
 export default connect(
-  null,
+  state => {
+    return {
+      ...state
+    };
+  },
   dispatch => {
     return {
       toggleTodo: index => {
@@ -77,8 +82,8 @@ export default connect(
       doubleToggleEidt: index => {
         dispatch({ type: 'TOGGLE_EDIT', index });
       },
-      changeTodoText: item => {
-        dispatch({ type: 'CHANGE_TODO_TEXT', item, index: this.props.index });
+      changeTodoText: (item, index) => {
+        dispatch({ type: 'CHANGE_TODO_TEXT', item, index });
       }
     };
   }
